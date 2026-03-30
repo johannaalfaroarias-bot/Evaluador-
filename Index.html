@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidate Evaluator — Senior Client Insights Analyst</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1B3A6B;
+    --navy-light: #2a4f8a;
+    --blue: #2E75B6;
+    --blue-light: #4a8fd4;
+    --cream: #F9F7F3;
+    --warm-white: #FEFCF9;
+    --sand: #E8E2D7;
+    --ink: #1A1A2E;
+    --muted: #6B7280;
+    --green: #1E7145;
+    --green-bg: #EEF7F2;
+    --red: #B91C1C;
+    --red-bg: #FEF2F2;
+    --amber: #92400E;
+    --amber-bg: #FFFBEB;
+    --border: #DDD8D0;
+    --shadow: 0 4px 24px rgba(27,58,107,0.08);
+    --shadow-lg: 0 8px 48px rgba(27,58,107,0.14);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 28px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-logo {
+    width: 38px; height: 38px;
+    background: var(--blue);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 700;
+    color: white;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-weight: 600;
+    color: white; letter-spacing: 0.01em;
+  }
+  .header-subtitle { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 2px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .header-badge {
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 4px 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── STEP INDICATOR ── */
+  .steps {
+    display: flex; align-items: center; gap: 0;
+    margin-bottom: 36px;
+  }
+  .step {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 13px; font-weight: 500;
+    color: var(--muted);
+    transition: color 0.3s;
+  }
+  .step.active { color: var(--navy); }
+  .step.done { color: var(--green); }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    background: white;
+    transition: all 0.3s;
+  }
+  .step.active .step-num { border-color: var(--blue); color: var(--blue); background: #EBF3FB; }
+  .step.done .step-num { border-color: var(--green); background: var(--green); color: white; }
+  .step-line { flex: 1; height: 2px; background: var(--border); margin: 0 12px; }
+  .step-line.done { background: var(--green); }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 8px;
+  }
+  .card-desc { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 13px; font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    resize: vertical;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(46,117,182,0.12);
+  }
+  .field textarea { min-height: 280px; line-height: 1.6; }
+  .field-note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--navy);
+    color: white;
+    box-shadow: 0 4px 14px rgba(27,58,107,0.3);
+  }
+  .btn-primary:hover { background: var(--navy-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(27,58,107,0.35); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-secondary {
+    background: white;
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+  .btn-green {
+    background: var(--green);
+    color: white;
+    box-shadow: 0 4px 14px rgba(30,113,69,0.3);
+  }
+  .btn-green:hover { background: #185c38; transform: translateY(-1px); }
+  .btn-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+
+  /* ── LOADING ── */
+  .loading-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 60px 36px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--sand);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin: 0 auto 24px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); margin-bottom: 8px; }
+  .loading-msg { font-size: 14px; color: var(--muted); }
+
+  /* ── RESULT CARD ── */
+  .result-header {
+    background: var(--navy);
+    border-radius: 14px 14px 0 0;
+    padding: 28px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .result-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: white; }
+  .result-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .result-tag {
+    font-size: 12px; font-weight: 600;
+    padding: 4px 12px; border-radius: 20px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .tag-blue { background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.9); }
+  .tag-green { background: #1E7145; color: white; }
+  .tag-red { background: #B91C1C; color: white; }
+  .tag-amber { background: #D97706; color: white; }
+
+  .decision-badge {
+    font-size: 15px; font-weight: 700;
+    padding: 10px 24px; border-radius: 10px;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .badge-yes { background: var(--green); color: white; box-shadow: 0 4px 12px rgba(30,113,69,0.4); }
+  .badge-no { background: var(--red); color: white; box-shadow: 0 4px 12px rgba(185,28,28,0.4); }
+  .badge-maybe { background: #D97706; color: white; }
+
+  .result-body { background: white; border: 1px solid var(--border); border-top: none; border-radius: 0 0 14px 14px; }
+
+  /* ── SCORECARD ── */
+  .scorecard {
+    padding: 28px 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .scorecard-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 20px;
+  }
+  .score-row {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #F0EDE8;
+  }
+  .score-row:last-child { border-bottom: none; }
+  .score-label { font-size: 14px; font-weight: 500; color: var(--ink); }
+  .score-bar-wrap { display: flex; align-items: center; gap: 10px; }
+  .score-bar {
+    flex: 1; height: 8px;
+    background: var(--sand);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .score-fill {
+    height: 100%; border-radius: 4px;
+    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+  }
+  .score-num { font-family: 'DM Mono', monospace; font-size: 14px; font-weight: 500; color: var(--navy); min-width: 32px; text-align: right; }
+  .total-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--navy);
+    border-radius: 10px;
+    margin-top: 16px;
+  }
+  .total-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.06em; }
+  .total-value { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: white; }
+  .total-max { font-size: 14px; color: rgba(255,255,255,0.5); }
+  .interp-badge {
+    font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+
+  /* ── SECTIONS ── */
+  .eval-section { padding: 24px 32px; border-bottom: 1px solid #F0EDE8; }
+  .eval-section:last-child { border-bottom: none; }
+  .eval-section-title {
+    font-size: 11px; font-weight: 700;
+    color: var(--muted); letter-spacing: 0.1em;
+    text-transform: uppercase; margin-bottom: 12px;
+  }
+  .eval-text { font-size: 14px; line-height: 1.75; color: #374151; white-space: pre-wrap; }
+
+  .flag-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+  }
+  .flag-yes { background: var(--red-bg); color: var(--red); border: 1px solid #FCA5A5; }
+  .flag-no { background: var(--green-bg); color: var(--green); border: 1px solid #86EFAC; }
+  .flag-maybe { background: var(--amber-bg); color: var(--amber); border: 1px solid #FCD34D; }
+
+  .english-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: #F8FAFC;
+  }
+  .english-level { font-size: 16px; font-weight: 700; color: var(--navy); }
+  .english-met { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.04em; }
+  .english-met.yes { background: var(--green-bg); color: var(--green); }
+  .english-met.no { background: var(--red-bg); color: var(--red); }
+
+  /* ── HIDDEN/SHOWN ── */
+  .hidden { display: none !important; }
+
+  /* ── TOOLTIP ── */
+  .info-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--sectionBg, #EBF3FB);
+    color: var(--blue);
+    font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 20px;
+    margin-top: 8px;
+  }
+
+  /* responsive */
+  @media (max-width: 600px) {
+    .container { padding: 24px 14px 60px; }
+    .card { padding: 24px 18px; }
+    .field-row { grid-template-columns: 1fr; }
+    .result-header { flex-direction: column; }
+    .score-row { grid-template-columns: 1fr 100px; }
+    .header { padding: 18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-logo">CI</div>
+    <div>
+      <div class="header-title">Candidate Evaluator</div>
+      <div class="header-subtitle">Senior Client Insights Analyst · SPINS</div>
+    </div>
+  </div>
+  <div class="header-badge">AI-Powered · LATAM</div>
+</div>
+
+<div class="container">
+
+  <!-- STEPS -->
+  <div class="steps" id="stepIndicator">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div>
+      <span>Candidate Info</span>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div>
+      <span>Interview Transcript</span>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <span>Evaluation Report</span>
+    </div>
+  </div>
+
+  <!-- STEP 1: Candidate Info -->
+  <div id="panelStep1">
+    <div class="card">
+      <div class="card-title">Candidate Information</div>
+      <div class="card-desc">Enter basic candidate details. These will appear on the evaluation report.</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="candidateName" placeholder="e.g. María Fernanda López" />
+        </div>
+        <div class="field">
+          <label>Current / Most Recent Role</label>
+          <input type="text" id="candidateRole" placeholder="e.g. Senior Market Research Analyst" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Country (LATAM)</label>
+          <input type="text" id="candidateCountry" placeholder="e.g. Colombia" />
+        </div>
+        <div class="field">
+          <label>Interview Date</label>
+          <input type="date" id="interviewDate" />
+        </div>
+      </div>
+      <div class="field">
+        <label>Recruiter / Interviewer Name</label>
+        <input type="text" id="recruiterName" placeholder="e.g. Joha" />
+      </div>
+      <div class="field">
+        <label>Additional Context (optional)</label>
+        <textarea id="additionalContext" style="min-height:90px" placeholder="Resume highlights, years of experience, notable companies, case study notes, or anything relevant for the evaluator..."></textarea>
+        <div class="field-note">Any extra context helps Claude produce a more accurate evaluation.</div>
+      </div>
+      <div class="btn-actions">
+        <button class="btn btn-primary" onclick="goToStep2()">Continue to Transcript →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: Transcript -->
+  <div id="panelStep2" class="hidden">
+    <div class="card">
+      <div class="card-title">Interview Transcript</div>
+      <div class="card-desc">Paste the full interview transcript below. Include both interviewer questions and candidate responses. The more complete the transcript, the more accurate the evaluation.</div>
+      <div class="field">
+        <label>Full Transcript *</label>
+        <textarea id="transcriptInput" style="min-height:380px; font-family:'DM Mono', monospace; font-size:13px;" placeholder="[Interviewer]: Tell me about your current or most recent role...&#10;[Candidate]: Sure, I've been working at...&#10;&#10;[Interviewer]: Walk me through a real analysis using retail or syndicated data...&#10;[Candidate]: ..."></textarea>
+        <div class="field-note">Minimum recommended: 300 words. The evaluation will be proportionally accurate to the transcript quality.</div>
+      </div>
+      <div class="btn-actions">
+        <button class="btn btn-secondary" onclick="goToStep1()">← Back</button>
+        <button class="btn btn-primary" onclick="runEvaluation()">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Run AI Evaluation
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="panelLoading" class="hidden">
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <div class="loading-title" id="loadingTitle">Analyzing transcript...</div>
+      <div class="loading-msg" id="loadingMsg">Claude is evaluating POS data experience, analytical depth, and communication quality.</div>
+    </div>
+  </div>
+
+  <!-- STEP 3: Result -->
+  <div id="panelStep3" class="hidden">
+
+    <!-- Result card populated by JS -->
+    <div id="resultCard"></div>
+
+    <div class="btn-actions" style="margin-top: 20px;">
+      <button class="btn btn-green" id="btnDownload" onclick="downloadReport()">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        Download .docx Report
+      </button>
+      <button class="btn btn-secondary" onclick="resetAll()">Evaluate Another Candidate</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- docx CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.umd.min.js"></script>
+<script>
+// ─── STATE ───────────────────────────────────────────────
+let evalResult = null;
+
+// ─── NAV ─────────────────────────────────────────────────
+function goToStep1() {
+  show('panelStep1'); hide('panelStep2'); hide('panelStep3'); hide('panelLoading');
+  setStep(1);
+}
+function goToStep2() {
+  const name = document.getElementById('candidateName').value.trim();
+  if (!name) { alert('Please enter the candidate name.'); return; }
+  show('panelStep2'); hide('panelStep1'); hide('panelStep3'); hide('panelLoading');
+  setStep(2);
+}
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+function hide(id) { document.getElementById(id).classList.add('hidden'); }
+
+function setStep(n) {
+  [1,2,3].forEach(i => {
+    const s = document.getElementById('step'+i);
+    s.classList.remove('active','done');
+    if (i < n) s.classList.add('done');
+    else if (i === n) s.classList.add('active');
+  });
+  [1,2].forEach(i => {
+    const l = document.getElementById('line'+i);
+    if (l) { l.classList.toggle('done', i < n); }
+  });
+}
+
+// ─── LOADING MESSAGES ─────────────────────────────────────
+const loadingMessages = [
+  ["Reading transcript...", "Identifying POS data signals and retail metrics usage."],
+  ["Evaluating analytical depth...", "Looking for distribution, velocity, and category-level thinking."],
+  ["Assessing client-facing maturity...", "Checking for storytelling structure and stakeholder ownership."],
+  ["Scoring English proficiency...", "Evaluating grammar, fluency, and professional communication readiness."],
+  ["Detecting AI-generated patterns...", "Checking for natural imperfection, real examples, and lived experience."],
+  ["Generating final scorecard...", "Calculating dimension scores and overall recommendation."],
+];
+let loadingIdx = 0, loadingTimer = null;
+
+function startLoadingCycle() {
+  loadingIdx = 0;
+  updateLoadingMsg();
+  loadingTimer = setInterval(() => {
+    loadingIdx = (loadingIdx + 1) % loadingMessages.length;
+    updateLoadingMsg();
+  }, 3200);
+}
+function stopLoadingCycle() { clearInterval(loadingTimer); }
+function updateLoadingMsg() {
+  document.getElementById('loadingTitle').textContent = loadingMessages[loadingIdx][0];
+  document.getElementById('loadingMsg').textContent = loadingMessages[loadingIdx][1];
+}
+
+// ─── SYSTEM PROMPT ────────────────────────────────────────
+function buildSystemPrompt() {
+  return `You are an expert evaluator for Senior Client Insights Analyst candidates in the style of a highly selective retail insights organization that hires professionals with strong experience in POS data, syndicated data, category performance analysis, and client-facing storytelling.
+
+Your role is to evaluate a candidate's interview transcript with maximum rigor, depth, and precision.
+
+CORE EVALUATION PRINCIPLES
+Be strict, evidence-based, and exhaustive.
+Do not assume experience that was not explicitly demonstrated.
+Do not give credit for vague, generic, or theoretical answers.
+Do not confuse general market research with retail POS or syndicated data experience.
+Prioritize real business ownership, retail metrics fluency, and client-facing communication.
+Assess whether the candidate sounds like someone who has truly worked in category insights, revenue growth, or retail analytics environments.
+
+SCORING DIMENSIONS — Score each from 0 to 5 only. Use integer values.
+
+1. POS Data Experience
+0: No experience with POS or retail sales data.
+1: Indirect exposure only — has seen POS outputs but did not work directly with datasets.
+2: Basic exposure — primarily data validation, QA, or report refresh. No analytical ownership.
+3: Some hands-on analysis — may have assisted but not owned insights or projects independently.
+4: Strong POS analytics — conducted SKU performance, category trends, distribution, pricing analyses.
+5: Deep expertise — regularly performs category reviews, promotional analysis, and business recommendations.
+
+2. Retail Metrics Knowledge
+0: Cannot define retail metrics such as distribution, velocity, or share.
+1: Heard of metrics but cannot explain how they work.
+2: Basic definitions known but lacks practical understanding.
+3: Understands common metrics but struggles to explain business implications.
+4: Strong understanding — can explain relationships between metrics and category impact.
+5: Expert — explains metrics naturally, interprets trends, describes how metrics drive strategic decisions.
+
+3. Syndicated Data Tools
+0: No experience with syndicated data platforms.
+1: Familiar with concept but has not used tools directly.
+2: Limited exposure — reviewing reports generated by others.
+3: Has used NielsenIQ, Circana, SPINS, or Kantar for basic queries or report retrieval.
+4: Regular user of syndicated datasets for analysis and business questions.
+5: Advanced user — conducts complex analyses, builds insights, answers client questions independently.
+
+4. Analytical Work
+0: No analytical work. Primarily operational or administrative.
+1: Basic reports or data summaries only.
+2: Limited tasks — supporting others rather than leading analysis.
+3: Moderate experience — ad-hoc analysis and performance summaries.
+4: Strong — category reviews, promotional analysis, and performance insights.
+5: Deep analytical ownership — leads strategic projects, provides data-driven recommendations.
+
+5. Client Presentation Experience
+0: No presentation experience.
+1: Occasionally prepares charts or slides for others, does not present.
+2: Internal presentations only — team meetings or internal reporting.
+3: Some stakeholder presentations but limited ownership of insights or storytelling.
+4: Regularly builds PowerPoint presentations and communicates insights to stakeholders or clients.
+5: Strong client-facing communicator — leads presentations, explains business implications, delivers recommendations.
+
+6. Communication & Storytelling
+0: Very poor communication. Unable to clearly explain experience.
+1: Struggles to articulate answers or explain analytical work.
+2: Basic communication but lacks clarity or structured thinking.
+3: Communicates adequately but storytelling is not very strong.
+4: Clear communicator who explains insights and business context effectively.
+5: Excellent storyteller — structures insights clearly, explains implications, communicates confidently.
+
+7. English Proficiency
+Evaluate clarity, grammar accuracy, vocabulary range, fluency, ability to explain complex ideas, and professional tone.
+Classify as one of: Basic / Intermediate / Upper-Intermediate / Advanced / Fluent
+Minimum required level: Advanced
+Also provide a numeric score from 0–5:
+0: Basic — very limited, barely comprehensible
+1: Elementary — major errors, limited expression
+2: Intermediate — communicates ideas with noticeable errors
+3: Upper-Intermediate — clear but lacks precision, some errors
+4: Advanced — strong grammar, professional, explains complex ideas
+5: Fluent/Near-Native — highly natural, precise, fully client-ready
+
+AI ANSWERS DETECTION
+Explicitly assess whether answers appear AI-generated, overly rehearsed, or artificially polished.
+Flag: Yes / No / Potentially
+Flag "Yes" or "Potentially" when: answers are generic and technically correct but disconnected from real examples; repetitive structure across all answers; textbook explanations without operational detail; lack of natural imperfection; no specific retailer names, categories, metrics, or stakeholder context; suspiciously uniform tone.
+
+TOTAL SCORE INTERPRETATION
+25–30: Strong candidate — submit to client
+20–24: Good candidate — verify gaps then submit
+15–19: Risk candidate — screen further
+Below 15: Do not submit
+
+MANDATORY OUTPUT FORMAT — Return ONLY valid JSON, no markdown, no explanation outside the JSON:
+
+{
+  "talentName": "string",
+  "seniority": "Junior|Mid-Level|Senior",
+  "englishLevel": "Basic|Intermediate|Upper-Intermediate|Advanced|Fluent",
+  "meetsEnglishRequirement": true|false,
+  "scores": {
+    "posData": 0,
+    "retailMetrics": 0,
+    "syndicatedTools": 0,
+    "analyticalWork": 0,
+    "clientPresentation": 0,
+    "communication": 0,
+    "englishProficiency": 0
+  },
+  "totalScore": 0,
+  "interpretation": "Strong candidate|Good candidate|Risk candidate|Do not submit",
+  "strengths": "string",
+  "areasOfOpportunity": "string",
+  "conclusion": "string",
+  "aiDetected": "Yes|No|Potentially",
+  "canProceed": true|false,
+  "currentStage": "string"
+}
+
+The "currentStage" should be a short recommendation like: "Submit to Case Study", "Submit to HM Interview — confirm POS depth", "Do Not Submit", etc.`;
+}
+
+// ─── RUN EVALUATION ───────────────────────────────────────
+async function runEvaluation() {
+  const transcript = document.getElementById('transcriptInput').value.trim();
+  if (transcript.length < 50) { alert('Please paste the interview transcript before running the evaluation.'); return; }
+
+  const name = document.getElementById('candidateName').value.trim();
+  const role = document.getElementById('candidateRole').value.trim();
+  const country = document.getElementById('candidateCountry').value.trim();
+  const context = document.getElementById('additionalContext').value.trim();
+
+  hide('panelStep2');
+  show('panelLoading');
+  setStep(3);
+  startLoadingCycle();
+
+  const userMessage = `
+CANDIDATE NAME: ${name}
+CURRENT/RECENT ROLE: ${role || 'Not provided'}
+COUNTRY: ${country || 'LATAM'}
+${context ? `ADDITIONAL CONTEXT:\n${context}\n` : ''}
+
+INTERVIEW TRANSCRIPT:
+${transcript}
+
+Please evaluate this candidate strictly following your scoring rubric and output only the JSON object.`.trim();
+
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 min timeout
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      signal: controller.signal,
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-5",
+        max_tokens: 2000,
+        system: buildSystemPrompt(),
+        messages: [{ role: "user", content: userMessage }]
+      })
+    });
+
+    clearTimeout(timeoutId);
+    const data = await response.json();
+    const rawText = data.content.map(b => b.text || '').join('').trim();
+
+    // Strip markdown fences if present
+    const clean = rawText.replace(/```json|```/gi, '').trim();
+    evalResult = JSON.parse(clean);
+    evalResult._meta = {
+      name, role, country,
+      date: document.getElementById('interviewDate').value,
+      recruiter: document.getElementById('recruiterName').value.trim(),
+      context,
+      transcript
+    };
+
+    stopLoadingCycle();
+    hide('panelLoading');
+    show('panelStep3');
+    renderResult(evalResult);
+
+  } catch (err) {
+    stopLoadingCycle();
+    hide('panelLoading');
+    show('panelStep2');
+    setStep(2);
+    const msg = err.name === 'AbortError' ? 'The evaluation timed out (>2 min). Please try again.' : 'Evaluation failed: ' + err.message;
+    alert(msg);
+    console.error(err);
+  }
+}
+
+// ─── RENDER ───────────────────────────────────────────────
+const scoreLabels = [
+  { key: 'posData', label: 'POS Data Experience' },
+  { key: 'retailMetrics', label: 'Retail Metrics Knowledge' },
+  { key: 'syndicatedTools', label: 'Syndicated Data Tools' },
+  { key: 'analyticalWork', label: 'Analytical Work' },
+  { key: 'clientPresentation', label: 'Client Presentation Experience' },
+  { key: 'communication', label: 'Communication & Storytelling' },
+  { key: 'englishProficiency', label: 'English Proficiency' },
+];
+
+function scoreColor(v) {
+  if (v >= 4) return '#1E7145';
+  if (v >= 3) return '#2E75B6';
+  if (v >= 2) return '#D97706';
+  return '#B91C1C';
+}
+
+function interpColor(interp) {
+  if (interp.includes('Strong')) return { bg: '#1E7145', color: 'white' };
+  if (interp.includes('Good')) return { bg: '#2E75B6', color: 'white' };
+  if (interp.includes('Risk')) return { bg: '#D97706', color: 'white' };
+  return { bg: '#B91C1C', color: 'white' };
+}
+
+function renderResult(r) {
+  const ic = interpColor(r.interpretation);
+  const decisionClass = r.canProceed ? 'badge-yes' : 'badge-no';
+  const decisionText = r.canProceed ? '✓ PROCEED' : '✗ DO NOT SUBMIT';
+
+  let scoreRows = scoreLabels.map(({ key, label }) => {
+    const v = r.scores[key] || 0;
+    const pct = (v / 5) * 100;
+    const col = scoreColor(v);
+    return `
+      <div class="score-row">
+        <div class="score-label">${label}</div>
+        <div class="score-bar-wrap">
+          <div class="score-bar"><div class="score-fill" style="width:${pct}%;background:${col}"></div></div>
+          <div class="score-num" style="color:${col}">${v} / 5</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  const aiClass = r.aiDetected === 'Yes' ? 'flag-yes' : r.aiDetected === 'Potentially' ? 'flag-maybe' : 'flag-no';
+  const aiIcon = r.aiDetected === 'Yes' ? '⚠' : r.aiDetected === 'Potentially' ? '◈' : '✓';
+  const engMetClass = r.meetsEnglishRequirement ? 'yes' : 'no';
+  const engMetText = r.meetsEnglishRequirement ? 'Meets Requirement' : 'Below Requirement';
+
+  document.getElementById('resultCard').innerHTML = `
+    <div class="result-header">
+      <div>
+        <div class="result-name">${r.talentName}</div>
+        <div class="result-meta">
+          <span class="result-tag tag-blue">${r.seniority}</span>
+          <span class="result-tag tag-blue">${r._meta.country || 'LATAM'}</span>
+          <span class="result-tag tag-blue">${r._meta.role || ''}</span>
+          <span class="result-tag" style="background:${ic.bg};color:${ic.color}">${r.interpretation} · ${r.totalScore}/35</span>
+        </div>
+      </div>
+      <div class="decision-badge ${decisionClass}">${decisionText}</div>
+    </div>
+    <div class="result-body">
+
+      <div class="scorecard">
+        <div class="scorecard-title">Evaluation Scorecard — 7 Dimensions</div>
+        ${scoreRows}
+        <div class="total-row">
+          <div class="total-label">Total Score</div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <div class="total-value">${r.totalScore}</div>
+            <div class="total-max">/ 35</div>
+          </div>
+          <span class="interp-badge" style="background:${ic.bg};color:${ic.color}">${r.interpretation}</span>
+        </div>
+      </div>
+
+      <div class="eval-section" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+        <div>
+          <div class="eval-section-title">English Assessment</div>
+          <div class="english-row">
+            <div>
+              <div class="english-level">${r.englishLevel}</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px">Minimum required: Advanced</div>
+            </div>
+            <span class="english-met ${engMetClass}">${engMetText}</span>
+          </div>
+        </div>
+        <div>
+          <div class="eval-section-title">AI-Generated Answers</div>
+          <div class="${aiClass} flag-row">
+            <span style="font-size:18px">${aiIcon}</span>
+            <div>
+              <div>AI Detected: ${r.aiDetected}</div>
+              <div style="font-size:12px;font-weight:400;margin-top:2px;opacity:0.8">${r.aiDetected === 'No' ? 'Answers appear genuine and specific' : r.aiDetected === 'Yes' ? 'Strong AI-generation signals detected' : 'Some patterns warrant attention'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="eval-section">
+        <div class="eval-section-title">Current Stage Recommendation</div>
+        <div style="font-size:15px;font-weight:700;color:var(--navy);padding:12px 18px;background:#EBF3FB;border-radius:8px;border-left:4px solid var(--blue)">${r.currentStage}</div>
+      </div>
+
+      <div class="eval-section">
+        <div class="eval-section-title">Strengths</div>
+        <div class="eval-text">${r.strengths}</div>
+      </div>
+
+      <div class="eval-section">
+        <div class="eval-section-title">Areas of Opportunity</div>
+        <div class="eval-text">${r.areasOfOpportunity}</div>
+      </div>
+
+      <div class="eval-section">
+        <div class="eval-section-title">Conclusion</div>
+        <div class="eval-text">${r.conclusion}</div>
+      </div>
+
+    </div>`;
+}
+
+// ─── DOWNLOAD .DOCX ───────────────────────────────────────
+async function downloadReport() {
+  if (!evalResult) return;
+  const r = evalResult;
+  const m = r._meta;
+
+  const {
+    Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+    AlignmentType, BorderStyle, WidthType, ShadingType, VerticalAlign,
+    LevelFormat, HeadingLevel
+  } = docx;
+
+  const PW = 9360;
+  const NAVY = "1B3A6B", BLUE = "2E75B6", LGRAY = "F5F5F5",
+        DKGRAY = "404040", SAND = "E8E2D7", RED = "B91C1C",
+        GREEN = "1E7145", AMBER = "D97706", WHITE = "FFFFFF", MID = "DDDDDD";
+
+  const nb = () => ({ style: BorderStyle.NONE, size: 0, color: WHITE });
+  const sb = (c=MID) => ({ style: BorderStyle.SINGLE, size: 4, color: c });
+  const allB = (c=MID) => ({ top:sb(c),bottom:sb(c),left:sb(c),right:sb(c) });
+  const noB = () => ({ top:nb(),bottom:nb(),left:nb(),right:nb() });
+  const cell = (children, opts={}) => new TableCell({ children, borders: opts.borders||noB(), shading: opts.shading||{fill:WHITE,type:ShadingType.CLEAR}, margins: opts.margins||{top:80,bottom:80,left:120,right:120}, width: opts.width, verticalAlign: opts.va||VerticalAlign.TOP });
+  const p = (text, opts={}) => new Paragraph({ alignment: opts.align||AlignmentType.LEFT, spacing: { before: opts.before||0, after: opts.after||60 }, children: [new TextRun({ text, bold: opts.bold||false, size: opts.size||20, color: opts.color||DKGRAY, font: "Calibri", italics: opts.italic||false })] });
+  const sp = () => new Paragraph({ spacing:{before:80,after:0}, children:[new TextRun("")] });
+  const fullRow = (children, fill=WHITE) => new Table({ width:{size:PW,type:WidthType.DXA}, columnWidths:[PW], rows:[new TableRow({children:[cell(children,{shading:{fill,type:ShadingType.CLEAR},borders:noB(),margins:{top:160,bottom:160,left:200,right:200}})]})] });
+
+  function scoreBar(label, val) {
+    const col = val >= 4 ? GREEN : val >= 3 ? BLUE : val >= 2 ? AMBER : RED;
+    const filled = Math.round((val/5)*18);
+    const empty = 18 - filled;
+    const bar = '█'.repeat(filled) + '░'.repeat(empty);
+    const half = Math.floor(PW/2);
+    return new Table({
+      width:{size:PW,type:WidthType.DXA}, columnWidths:[Math.floor(PW*0.45), Math.floor(PW*0.38), Math.floor(PW*0.17)],
+      rows:[new TableRow({children:[
+        cell([p(label,{size:19})], {borders:allB(),shading:{fill:LGRAY,type:ShadingType.CLEAR},width:{size:Math.floor(PW*0.45),type:WidthType.DXA}}),
+        cell([p(bar,{size:18,color:col,bold:true})], {borders:allB(),width:{size:Math.floor(PW*0.38),type:WidthType.DXA}}),
+        cell([p(`${val} / 5`,{size:19,bold:true,color:col,align:AlignmentType.CENTER})], {borders:allB(),width:{size:Math.floor(PW*0.17),type:WidthType.DXA}}),
+      ]})]
+    });
+  }
+
+  function sectionHeader(title) {
+    return fullRow([p(title,{bold:true,size:22,color:WHITE,before:0,after:0})], NAVY);
+  }
+
+  const ic = r.interpretation.includes('Strong') ? GREEN : r.interpretation.includes('Good') ? BLUE : r.interpretation.includes('Risk') ? AMBER : RED;
+
+  const scoreRows = scoreLabels.map(({key,label}) => scoreBar(label, r.scores[key]||0));
+
+  const doc2 = new Document({
+    styles: { default: { document: { run: { font:"Calibri", size:20 } } } },
+    sections:[{
+      properties:{ page:{ size:{width:12240,height:15840}, margin:{top:900,right:1080,bottom:900,left:1080} } },
+      children:[
+        // Cover
+        fullRow([
+          p('CANDIDATE EVALUATION REPORT',{bold:true,size:32,color:WHITE,before:0,after:80}),
+          p('Senior Client Insights Analyst · SPINS',{size:22,color:"A8D1F0",before:0,after:60}),
+          p(`${m.date ? 'Interview Date: '+m.date : ''} ${m.recruiter ? '· Evaluated by: '+m.recruiter : ''}`.trim(),{size:18,color:"A8D1F0",before:0,after:0}),
+        ], NAVY),
+        sp(), sp(),
+
+        // Candidate info box
+        new Table({
+          width:{size:PW,type:WidthType.DXA}, columnWidths:[Math.round(PW/2),Math.round(PW/2)],
+          rows:[
+            new TableRow({children:[
+              cell([p('Candidate Name',{bold:true,size:18,color:NAVY}), p(r.talentName||m.name,{bold:true,size:24,color:NAVY,before:40})], {borders:allB(SAND),shading:{fill:"EBF3FB",type:ShadingType.CLEAR},width:{size:Math.round(PW/2),type:WidthType.DXA}}),
+              cell([p('Current Role',{bold:true,size:18,color:NAVY}), p(m.role||'—',{size:20,color:DKGRAY,before:40})], {borders:allB(SAND),shading:{fill:LGRAY,type:ShadingType.CLEAR},width:{size:Math.round(PW/2),type:WidthType.DXA}}),
+            ]}),
+            new TableRow({children:[
+              cell([p('Country',{bold:true,size:18,color:NAVY}), p(m.country||'LATAM',{size:20,color:DKGRAY,before:40})], {borders:allB(SAND),shading:{fill:LGRAY,type:ShadingType.CLEAR},width:{size:Math.round(PW/2),type:WidthType.DXA}}),
+              cell([p('Seniority Assessment',{bold:true,size:18,color:NAVY}), p(r.seniority,{bold:true,size:20,color:BLUE,before:40})], {borders:allB(SAND),shading:{fill:"EBF3FB",type:ShadingType.CLEAR},width:{size:Math.round(PW/2),type:WidthType.DXA}}),
+            ]}),
+          ]
+        }),
+        sp(), sp(),
+
+        // Decision banner
+        new Table({
+          width:{size:PW,type:WidthType.DXA}, columnWidths:[Math.round(PW*0.6),Math.round(PW*0.4)],
+          rows:[new TableRow({children:[
+            cell([p('OVERALL RECOMMENDATION',{bold:true,size:18,color:WHITE,before:0,after:40}), p(r.currentStage,{bold:true,size:22,color:WHITE,before:0,after:0})], {borders:noB(),shading:{fill:NAVY,type:ShadingType.CLEAR},width:{size:Math.round(PW*0.6),type:WidthType.DXA}}),
+            cell([p('CAN WE PROCEED?',{bold:true,size:18,color:WHITE,align:AlignmentType.CENTER,before:0,after:40}), p(r.canProceed?'YES — PROCEED':'NO — DO NOT SUBMIT',{bold:true,size:22,color:WHITE,align:AlignmentType.CENTER,before:0,after:0})], {borders:noB(),shading:{fill:r.canProceed?GREEN:RED,type:ShadingType.CLEAR},width:{size:Math.round(PW*0.4),type:WidthType.DXA}}),
+          ]})]
+        }),
+        sp(), sp(),
+
+        // SCORECARD
+        sectionHeader('EVALUATION SCORECARD'),
+        sp(),
+        ...scoreRows.flatMap(row => [row, sp()]),
+
+        // Total
+        new Table({
+          width:{size:PW,type:WidthType.DXA}, columnWidths:[Math.round(PW*0.5),Math.round(PW*0.25),Math.round(PW*0.25)],
+          rows:[new TableRow({children:[
+            cell([p('TOTAL SCORE',{bold:true,size:20,color:WHITE})], {borders:noB(),shading:{fill:NAVY,type:ShadingType.CLEAR},width:{size:Math.round(PW*0.5),type:WidthType.DXA}}),
+            cell([p(`${r.totalScore} / 35`,{bold:true,size:24,color:WHITE,align:AlignmentType.CENTER})], {borders:noB(),shading:{fill:NAVY,type:ShadingType.CLEAR},width:{size:Math.round(PW*0.25),type:WidthType.DXA}}),
+            cell([p(r.interpretation,{bold:true,size:18,color:WHITE,align:AlignmentType.CENTER})], {borders:noB(),shading:{fill:ic,type:ShadingType.CLEAR},width:{size:Math.round(PW*0.25),type:WidthType.DXA}}),
+          ]})]
+        }),
+        sp(), sp(),
+
+        // English + AI
+        new Table({
+          width:{size:PW,type:WidthType.DXA}, columnWidths:[Math.round(PW/2),Math.round(PW/2)],
+          rows:[new TableRow({children:[
+            cell([
+              p('ENGLISH PROFICIENCY',{bold:true,size:18,color:NAVY,before:0,after:40}),
+              p(r.englishLevel,{bold:true,size:22,color:NAVY,before:0,after:20}),
+              p('Minimum required: Advanced',{size:18,color:"888888",italic:true,before:0,after:20}),
+              p(r.meetsEnglishRequirement?'✓ MEETS REQUIREMENT':'✗ BELOW REQUIREMENT',{bold:true,size:18,color:r.meetsEnglishRequirement?GREEN:RED,before:0,after:0}),
+            ], {borders:allB(SAND),shading:{fill:"EBF3FB",type:ShadingType.CLEAR},width:{size:Math.round(PW/2),type:WidthType.DXA}}),
+            cell([
+              p('AI-GENERATED ANSWERS',{bold:true,size:18,color:NAVY,before:0,after:40}),
+              p(r.aiDetected === 'No' ? '✓ Not Detected' : r.aiDetected === 'Yes' ? '⚠ Detected' : '◈ Potentially Detected',{bold:true,size:20,color:r.aiDetected==='No'?GREEN:r.aiDetected==='Yes'?RED:AMBER,before:0,after:20}),
+              p(r.aiDetected==='No'?'Answers appear genuine and evidence-based':r.aiDetected==='Yes'?'Strong AI-generation signals detected':'Some patterns warrant further review',{size:18,italic:true,color:DKGRAY,before:0,after:0}),
+            ], {borders:allB(SAND),shading:{fill:LGRAY,type:ShadingType.CLEAR},width:{size:Math.round(PW/2),type:WidthType.DXA}}),
+          ]})]
+        }),
+        sp(), sp(),
+
+        // Strengths
+        sectionHeader('STRENGTHS'),
+        sp(),
+        fullRow([p(r.strengths,{size:20,color:DKGRAY})], "F0FFF4"),
+        sp(), sp(),
+
+        // Opportunities
+        sectionHeader('AREAS OF OPPORTUNITY'),
+        sp(),
+        fullRow([p(r.areasOfOpportunity,{size:20,color:DKGRAY})], "FFF9F0"),
+        sp(), sp(),
+
+        // Conclusion
+        sectionHeader('CONCLUSION'),
+        sp(),
+        fullRow([p(r.conclusion,{size:20,color:DKGRAY})], WHITE),
+        sp(), sp(),
+
+        // Footer line
+        new Paragraph({ spacing:{before:120,after:0}, border:{ bottom:{style:BorderStyle.SINGLE,size:4,color:MID}}, children:[new TextRun("")] }),
+        sp(),
+        p(`Generated by Candidate Evaluator · ${m.recruiter||'Recruiter'} · ${m.date||new Date().toISOString().split('T')[0]}`,{size:16,color:"999999",italic:true,align:AlignmentType.CENTER}),
+      ]
+    }]
+  });
+
+  const buffer = await Packer.toBuffer(doc2);
+  const blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Evaluation_${(r.talentName||'Candidate').replace(/\s+/g,'_')}.docx`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── RESET ───────────────────────────────────────────────
+function resetAll() {
+  evalResult = null;
+  document.getElementById('transcriptInput').value = '';
+  document.getElementById('additionalContext').value = '';
+  hide('panelStep3'); hide('panelLoading');
+  show('panelStep1');
+  setStep(1);
+  document.getElementById('resultCard').innerHTML = '';
+}
+</script>
+</body>
+</html>
